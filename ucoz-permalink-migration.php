@@ -44,6 +44,7 @@ function internal_redirect($query)
     // Возможно это пагинатор
     if ($params_count == 1) {
         if (strpos($query, "blog") && intval($clean_query)) {
+            //TODO:: попробовать использовать get_option('pagination_base') для получения слага страниц
             $permalink = get_site_url() . '/page/' . $clean_query;
         }
     }

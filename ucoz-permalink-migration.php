@@ -19,9 +19,9 @@ function external_redirect($query)
 function internal_redirect($query)
 {
     $patterns = array("/index/", "/blog/", "'\/'");
-    $query = preg_replace($patterns, '', $query);
+    $clean_query = preg_replace($patterns, '', $query);
 
-    $params = explode("-", $query);
+    $params = explode("-", $clean_query);
     $params_count = count($params);
 
     // "Странный урл 86-" или страница
@@ -41,6 +41,13 @@ function internal_redirect($query)
         $permalink = get_category_link($category_id);
     }
 
+    // Возможно это пагинатор
+    if ($params_count == 1) {
+        if (strpos($query, "blog") && intval($clean_query)) {
+            $permalink = get_site_url() . '/page/' . $clean_query;
+        }
+    }
+
     if ($permalink) {
         do_internal_redirect($permalink);
     }
@@ -58,7 +65,7 @@ function ucoz_redirect($template)
 {
     $query = $_SERVER['REQUEST_URI'];
 
-    if (strrpos($query, "go?")) {
+    if (strpos($query, "go?")) {
         external_redirect($query);
     } else {
         internal_redirect($query);
@@ -68,5 +75,4 @@ function ucoz_redirect($template)
 }
 
 add_filter('404_template', 'ucoz_redirect');
-
 ?>
